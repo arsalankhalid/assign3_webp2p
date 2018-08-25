@@ -61,28 +61,27 @@ public class FileServerService {
         FileServerService fileServerService = new FileServerService();
         System.out.println("Connected!");
 
+        System.out.println(fileServerService.searchNetwork("sample.txt"));
     }
 
     /*
-    Client issues a search signal to determine if a file exists on the network
+    Client issues a search signal to determine if a file exists on the network, gets back filename if it exists
      */
     public String searchNetwork(String fileName) {
-        //todo: if the client program finds that anyone is sharing the file, the client program shows the file name to the user without
+        //todo: ensure bad text can get wiped and respond with appropriate error message
         //revealing who owns the file
         //if the client program finds that no one is sharing the file, the client program shows "no match result" to the user
+        String fileExits = "";
         try {
-
             Statement query = conn.createStatement();
-            ResultSet rs = query.executeQuery("SELECT OWNER FROM SHARED_FILESYSTEM  WHERE filename=" + fileName);
+            ResultSet rs = query.executeQuery("SELECT FILENAME FROM SHARED_FILESYSTEM  WHERE filename='" + fileName +"'");
             if(rs.first()) {
-                //get content from rs
-                System.out.println(rs.getArray(0));
-                System.out.println("Filename was found, owner is: ");
+                fileExits = rs.getString("FILENAME");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return "searchNetwork";
+        return fileExits;
     }
 
     /*
